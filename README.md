@@ -1,5 +1,22 @@
 # 🎯 KNOMI V2 - 6-Toolhead VORON Display System
 
+In this fork all the upstream features are maintained with the below differences:
+
+- Fixes incorrect tool temp displays for multi tool
+- Automatically maps KNOMI hostnames to their relevant extruder `knomi-t0 → extruder`, `knomi-t1 → extruder1`, etc
+- Changes printer-state and temperature retrieval from the legacy /api/printer endpoint to Klipper’s current Moonraker object API.
+- Uses print_stats.state as the authoritative source for printing, paused, pausing, and cancelling states.
+- Retains print progress as a 0.0–1.0 float instead of prematurely rounding it to an integer percentage.
+- Adds progress-value validation to prevent malformed values from reaching the display calculations.
+- Reworks ETA calculation to use the full-resolution progress value, substantially reducing large time swings caused by rounding.
+  - Adds adaptive ETA smoothing, with stronger filtering early in a print and faster adjustment later.
+  - Updates the ETA estimate only when G-code file progress advances, preventing toolchanges, wipes, and purge operations from repeatedly inflating it.
+  - Continues counting the displayed remaining time downward while file progress is temporarily stationary.
+  - Resets ETA tracking when a new print starts or Klipper’s print statistics reset.
+  - Displays a calculating state during the unreliable first 2% of a print.
+
+
+
 [![Platform](https://img.shields.io/badge/platform-ESP32--S3-blue.svg)](https://www.espressif.com/en/products/socs/esp32-s3)
 [![Framework](https://img.shields.io/badge/framework-Arduino-00979D.svg)](https://www.arduino.cc/)
 [![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
